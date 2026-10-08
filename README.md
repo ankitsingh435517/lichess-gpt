@@ -62,4 +62,4 @@ The next question is:
 
 The full research report documents the experimental design, scaling results, and subsequent investigation.
 
-**Full report:** [Research report]
+**Full report:** [Lichess-GPT Research Report](https://gist.github.com/ankitsingh435517/9b2812d8bf138ad98a2c22dccc265607)
