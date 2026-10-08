@@ -62,6 +62,4 @@ The next question is:
 
 The full research report documents the experimental design, scaling results, and subsequent investigation.
 
-**Code:** [https://github.com/ankitsingh435517/lichess-gpt]
-
 **Full report:** [Research report]
