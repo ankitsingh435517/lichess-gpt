@@ -1,27 +1,67 @@
-# Lichess GPT
+# Lichess-GPT
 
-A small GPT-style Transformer trained on Lichess chess games, built as a controlled environment for studying **mechanistic interpretability**.
+A small GPT trained from scratch on Lichess games, used as a controlled testbed for studying the relationship between next-token prediction and autonomous behaviour.
 
-The model learns to predict the next chess move from the preceding move history using UCI move-level tokenization.
+## Research Question
 
-## Current Model
+> **Can autoregressive next-move prediction produce robust autonomous legal chess generation?**
 
-- **Architecture:** Decoder-only Transformer
-- **Parameters:** ~12M
-- **Layers:** 6
-- **Embedding dimension:** 384
-- **Attention heads:** 16
-- **Context length:** 256 moves
-- **Vocabulary:** ~1.8K UCI moves
+The model is trained on legal chess trajectories using autoregressive next-token prediction, then evaluated in closed loop: its own predictions become the context for subsequent predictions.
 
-Training examples are generated **on demand** from game-level data rather than materializing the entire dataset in memory. Evaluation is performed exhaustively over the train and development splits.
+This separates two questions:
 
-## Goal
+- **Prediction:** how well does the model predict the next move?
+- **Autonomy:** how long can it generate legal moves under its own predictions?
 
-The immediate goal is to establish a clean and reproducible Transformer baseline that can later be used to investigate how the model internally represents chess state and performs its computations.
+## What I Built
 
-Future work will focus on representation analysis, causal interventions, and mechanistic interpretability experiments.
+I implemented a decoder-only Transformer from scratch, progressing from an MLP baseline through self-attention and multi-head attention to the final Transformer.
 
-> **Status:** Early research / work in progress.
+The experiments then tested five forms of scaling:
 
-*This project is independent and not affiliated with Lichess.*
+- training duration
+- model width
+- context length
+- model depth
+- training-data scale
+
+The final model uses:
+
+- 50K Lichess games
+- 12 Transformer blocks
+- `d_model = 224`
+- 4 attention heads
+- context length 128
+- ~8.14M parameters
+- UCI move tokenization
+
+Autonomous legality is evaluated independently with `python-chess`.
+
+## Result
+
+Scaling improved next-token prediction, but did not produce robust autonomous legality.
+
+The final 50K-game model:
+
+- **Median first illegal move:** 4
+- **Survival to 10 moves:** 0%
+- **Survival to 20 moves:** 0%
+- **Survival to 50 moves:** 0%
+
+Across the tested scaling interventions, the gap between improved prediction and autonomous legality persisted.
+
+This does **not** establish that scaling cannot produce autonomous chess, or that next-token prediction is fundamentally incapable of doing so. It establishes the result only within the tested model, training, and data regime.
+
+## Current Research
+
+Scaling is now frozen.
+
+The next question is:
+
+> **What information and computation has the trained model learned that can explain the gap between improved next-move prediction and failure to sustain autonomous legal chess generation?**
+
+The full research report documents the experimental design, scaling results, and subsequent investigation.
+
+**Code:** [https://github.com/ankitsingh435517/lichess-gpt]
+
+**Full report:** [Research report]
